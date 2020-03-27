@@ -31,10 +31,6 @@ public class GraphModel {
         return vertexesGraph.size();
     }
 
-    public List<VertexModel> findMinPath(VertexModel start,VertexModel finish){
-        List<VertexModel> answer = new ArrayList<VertexModel>();
-        return answer;
-    }
 
     private void printGraph(){
         int n = vertexesGraph.size();

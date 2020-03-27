@@ -1,10 +1,7 @@
-package Controller;
+package controller;
 
-import javafx.scene.Group;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import model.*;
 import view.*;
 
@@ -22,7 +19,7 @@ public class VertexController implements Observer {
 
     }
 
-    public void setOnVertexClicked(MouseEvent mouseEvent, Pane pane, VertexView copy){
+    public void setOnVertexClicked(MouseEvent mouseEvent, GraphTab graphTab, VertexView copy){
         switch (state) {
             case VERTEX_BUTTON_MODE : {
 
@@ -31,7 +28,7 @@ public class VertexController implements Observer {
             case EDGE_BUTTON_MODE : {
                 //добавить покраску в оранжевый
                 if(!isEdgeBuildingInProgress){
-                    this.bufferEdge = new EdgeView(pane);
+                    this.bufferEdge = new EdgeView(graphTab);
                     bufferEdge.setStart(copy);
                     copy.addEdge(bufferEdge);
                     isEdgeBuildingInProgress = true;
@@ -40,21 +37,50 @@ public class VertexController implements Observer {
                 else {
                     bufferEdge.setFinish(copy);
                     copy.addEdge(bufferEdge);
+                    graphTab.addEdge(bufferEdge);
                     isEdgeBuildingInProgress = false;
                     bufferEdge.getStart().setGreyIcon();
-                    pane.getChildren().add(bufferEdge);
+                    graphTab.getPane().getChildren().add(bufferEdge);
                 }
                 break;
             }
-            case RENAME_BUTTON_MODE:{
+            case RENAME_BUTTON_MODE : {
                 TextInputDialog dialog = new TextInputDialog(" ");
                 dialog.setTitle("Rename vertex");
                 dialog.setHeaderText("Please, enter new name of vertex");
                 dialog.setContentText("New ID: ");
                 Optional<String> result = dialog.showAndWait();
                 result.ifPresent(copy::setIdentifier);
+                break;
+            }
+            case DELETE_BUTTON_MODE : {
+                deleteVertex(graphTab, copy);
+                break;
             }
         }
+    }
+
+    private void deleteVertex(GraphTab graphTab, VertexView vertex){
+        EdgeView currentEdge;
+
+        vertex.setVisible(false);
+        graphTab.getGraphView().getGraphRoot().removeVertex(vertex.getVertexModel());
+        graphTab.getGraphView().removeVertex(vertex);
+        int n = vertex.getNumberEdges();
+        while (n>0){
+            currentEdge = vertex.getEdgesAtIndex(n - 1);
+            EdgeModel oldEdgeModel = currentEdge.getEdgeModel();
+            currentEdge.getStart().getVertexModel().removeEdge(oldEdgeModel);
+            currentEdge.getFinish().getVertexModel().removeEdge(oldEdgeModel);
+
+            graphTab.getEdgeList().removeEdge(currentEdge);
+            currentEdge.setVisible(false);
+            graphTab.getPane().getChildren().remove(currentEdge);
+            currentEdge.getStart().removeEdge(currentEdge);
+            currentEdge.getFinish().removeEdge(currentEdge);
+            n--;
+        }
+        graphTab.getPane().getChildren().remove(vertex);
     }
 
     public void setOnPressedVertex(MouseEvent mouseEvent, VertexView copy){

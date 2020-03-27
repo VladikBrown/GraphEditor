@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EdgeList {
-    private List<EdgeView> edgeList = new ArrayList<EdgeView>();
+
+    private List<EdgeView> edgeList;
+
+    public EdgeList(){
+        edgeList = new ArrayList<>();
+    }
 
     public int getNumberAllEdges(){
         return edgeList.size();

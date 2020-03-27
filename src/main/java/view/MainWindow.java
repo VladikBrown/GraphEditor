@@ -1,6 +1,6 @@
 package view;
 
-import Controller.Controller;
+import controller.Controller;
 import javafx.scene.control.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -77,7 +77,7 @@ public class MainWindow extends Application {
         borderPane.setCenter(tabPane);
         borderPane.setRight(specialTasks);
 
-        View view = new View();
+        View view = new View(primaryStage);
         Scene root = new Scene(view.asParent(), 1000, 600);
         primaryStage.setScene(root);
         primaryStage.setResizable(true);

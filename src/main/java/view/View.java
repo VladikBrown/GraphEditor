@@ -1,21 +1,25 @@
 package view;
 
-import Controller.Controller;
+import controller.Controller;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 
 //TODO list tabs and tab wrapper
 public class View {
     private Controller controller = new Controller();
+    private Stage primaryStage;
 
-    View() {
+    View(Stage stage) {
+        primaryStage = stage;
         initializeButtons();
         configureToolBars();
         createAndConfigurePane();
@@ -38,7 +42,6 @@ public class View {
     Button renameButton = new Button();
     //rightToolbar
     Button findCyclesButton = new Button("find cycles");
-
     private void createAndConfigurePane() {
         view = new BorderPane();
         tabPane = new TabPane();
@@ -79,8 +82,9 @@ public class View {
     public void addTab(String title) {
         GraphTab tab = new GraphTab(title);
         Pane pane = new Pane();
-        pane.setOnMouseClicked(mouseEvent -> controller.setOnPaneClicked(mouseEvent, pane));
-        tab.setContent(pane);
+        tab.setPane(pane);
+        tab.setGraphView(new GraphView(tab));
+        tab.getPane().setOnMouseClicked(mouseEvent -> controller.setOnPaneClicked(mouseEvent, tab));
         tabPane.getTabs().add(tab);
     }
 
@@ -91,6 +95,10 @@ public class View {
     private void configureButtons(){
         newButton.setOnAction
                 (actionEvent -> addTab("Unnamed"));
+        saveButton.setOnAction
+                (actionEvent -> controller.setOnSaveButtonClicked(primaryStage, tabPane));
+        openButton.setOnAction
+                (actionEvent -> controller.setOnOpenButtonClicked(primaryStage, tabPane));
         vertexButton.setOnAction
                 (actionEvent -> controller.setOnVertexButtonClicked());
         edgeButton.setOnAction

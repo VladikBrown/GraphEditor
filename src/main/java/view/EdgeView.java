@@ -1,12 +1,11 @@
 package view;
 
-import Controller.EdgeController;
+import controller.EdgeController;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -18,38 +17,41 @@ import model.constants.VertexConst;
 //TODO: Перенести реализацию в @EdgeController
 //TODO: Upgrade
 public class EdgeView extends Group {
-    private Pane parentPane;
+    private GraphTab graphTab;
     //должно быть интовым!
-    private Label id;
+    private Label weight;
     private Arrow view;
     private VertexView start;
     private VertexView finish;
     private EdgeModel edgeModel;
-    //TODO: make private and add  getter/setter
     public static EdgeController edgeController;
-    public EdgeView(Pane pane){
+
+
+
+    //TODO: make private and add  getter/setter
+    public EdgeView(GraphTab graphTab){
         this.edgeModel = new EdgeModel();
         initVertexControls();
-        this.id = new Label();
+        this.weight = new Label();
         this.view = new Arrow();
-        this.parentPane = pane;
+        this.graphTab = graphTab;
     }
 
 
     //TODO: довести до кондиций конструктор с параметрами
-    public EdgeView(VertexView start, VertexView finish, Pane pane){
+    public EdgeView(VertexView start, VertexView finish, GraphTab graphTab){
         initVertexControls();
-        id = new Label(" ");
+        weight = new Label(" ");
         this.start = start;
         this.finish = finish;
-        this.parentPane = pane;
+        this.graphTab = graphTab;
         this.edgeModel = new EdgeModel();
         view = new Arrow(start, finish);
-        this.getChildren().addAll(id, view);
+        this.getChildren().addAll(weight, view);
     }
 
     private void initVertexControls() {
-        setOnMouseClicked(mouseEvent -> edgeController.setOnVertexClicked(mouseEvent, parentPane, this));
+        setOnMouseClicked(mouseEvent -> edgeController.setOnEdgeClicked(mouseEvent, graphTab, this));
     }
 
     public void setStart(VertexView start){
@@ -62,15 +64,15 @@ public class EdgeView extends Group {
         this.finish = finish;
         view.setEndPoint(finish);
         this.edgeModel.setFinish(finish.getVertexModel());
-        this.id.translateXProperty().bind(((start.translateXProperty().add(finish.translateXProperty())).divide(2)));
-        this.id.translateYProperty().bind(((start.translateYProperty().add(finish.translateYProperty())).divide(2)));
-        this.getChildren().addAll(id, view);
+        this.weight.translateXProperty().bind(((start.translateXProperty().add(finish.translateXProperty())).divide(2)));
+        this.weight.translateYProperty().bind(((start.translateYProperty().add(finish.translateYProperty())).divide(2)));
+        this.getChildren().addAll(weight, view);
     }
 
     public void setIdentifier(String id) {
         try {
             int value = Integer.parseInt(id);
-            this.id.setText(Integer.toString(value));
+            this.weight.setText(Integer.toString(value));
             this.edgeModel.setWeight(value);
         }catch (NumberFormatException e){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -80,8 +82,16 @@ public class EdgeView extends Group {
         }
     }
 
+    public EdgeModel getEdgeModel() {
+        return edgeModel;
+    }
+
+    public void setEdgeModel(EdgeModel edgeModel) {
+        this.edgeModel = edgeModel;
+    }
+
     public String getIdentifier() {
-        return id.toString();
+        return weight.getText();
     }
 
     public VertexView getStart() {

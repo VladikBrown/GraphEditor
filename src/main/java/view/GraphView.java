@@ -8,6 +8,15 @@ import java.util.List;
 //start можно убрать
 public class GraphView {
     private GraphModel graphRoot;
+    private List<VertexView> vertexesGraph;
+    private GraphTab graphTab;
+    private VertexView start;
+
+
+    public GraphTab getGraphTab() {
+        return graphTab;
+    }
+
     public List<VertexView> getVertexesGraph() {
         return vertexesGraph;
     }
@@ -16,12 +25,8 @@ public class GraphView {
         this.vertexesGraph = vertexesGraph;
     }
 
-    private List<VertexView> vertexesGraph;
-    private GraphTab graphTab;
-    private VertexView start;
-
-    public GraphView(GraphTab boxDrawing){
-        this.graphTab = boxDrawing;
+    public GraphView(GraphTab graphTab){
+        this.graphTab = graphTab;
         graphRoot = new GraphModel();
         vertexesGraph = new ArrayList<VertexView>();
         start = null;

@@ -1,11 +1,9 @@
 package view;
 
-import Controller.VertexController;
+import controller.VertexController;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
-import model.ModeState;
 import model.VertexModel;
 import model.constants.VertexConst;
 
@@ -16,7 +14,7 @@ import java.util.List;
 
 public class VertexView extends Label{
     private List<EdgeView> vertexEdges;
-    Pane parentPane;
+    GraphTab graphTab;
     ImageView icon;
     String identifier;
     ImageView greenVertexImageView;
@@ -26,13 +24,13 @@ public class VertexView extends Label{
     //TODO make private
     public static VertexController vertexController;
 
-    public VertexView(ImageView icon, String identifier, Pane pane){
+    public VertexView(ImageView icon, String identifier, GraphTab graphTab){
         super(identifier, icon);
         this.vertexEdges = new ArrayList<EdgeView>();
-        //vertexController = new VertexController();
-        this.parentPane = pane;
+        this.graphTab = graphTab;
         this.icon = icon;
         this.identifier = identifier;
+        this.vertexModel = new VertexModel();
         this.greenVertexImageView = new ImageView(VertexConst.GREEN_VERTEX_IMAGE);
         this.greyVertexImageView = new ImageView(VertexConst.GREY_VERTEX_IMAGE);
         this.orangeVertexImageView = new ImageView(VertexConst.ORANGE_VERTEX_IMAGE);
@@ -47,7 +45,7 @@ public class VertexView extends Label{
                 (mouseEvent -> this.setGraphic(greyVertexImageView));
 
         this.setOnMouseClicked
-                (mouseEvent -> vertexController.setOnVertexClicked(mouseEvent, parentPane, this));
+                (mouseEvent -> vertexController.setOnVertexClicked(mouseEvent, graphTab, this));
 
         this.setOnMousePressed
                 (mouseEvent -> vertexController.setOnPressedVertex(mouseEvent, this));
@@ -58,6 +56,7 @@ public class VertexView extends Label{
 
     public void addEdge(EdgeView edge){
         vertexEdges.add(edge);
+        vertexModel.addEdge(edge.getEdgeModel());
     }
 
     public  void removeEdge(EdgeView edge){
@@ -97,7 +96,16 @@ public class VertexView extends Label{
                 (mouseEvent -> this.setGraphic(greyVertexImageView));
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setVertexModel(VertexModel vertexModel) {
+        this.vertexModel = vertexModel;
+    }
+
     public void setIdentifier(String newID){
         this.setText(newID);
+        this.identifier = newID;
     }
 }
