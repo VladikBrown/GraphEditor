@@ -19,6 +19,7 @@ public class VertexController implements Observer {
 
     }
 
+    //TODO вынести кейсы в отдельные методы
     public void setOnVertexClicked(MouseEvent mouseEvent, GraphTab graphTab, VertexView copy){
         switch (state) {
             case VERTEX_BUTTON_MODE : {

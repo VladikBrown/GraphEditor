@@ -41,7 +41,7 @@ public class EdgeView extends Group {
     //TODO: довести до кондиций конструктор с параметрами
     public EdgeView(VertexView start, VertexView finish, GraphTab graphTab){
         initVertexControls();
-        weight = new Label(" ");
+        weight = new Label("");
         this.start = start;
         this.finish = finish;
         this.graphTab = graphTab;
@@ -75,10 +75,12 @@ public class EdgeView extends Group {
             this.weight.setText(Integer.toString(value));
             this.edgeModel.setWeight(value);
         }catch (NumberFormatException e){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Invalid value, bro!");
-            alert.setContentText("Weight of edge must be a number");
-            alert.show();
+            if (!"".equals(id)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Invalid value, bro!");
+                alert.setContentText("Weight of edge must be a number");
+                alert.show();
+            }
         }
     }
 

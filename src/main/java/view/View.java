@@ -2,10 +2,9 @@ package view;
 
 import controller.Controller;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.ToolBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -23,11 +22,21 @@ public class View {
         initializeButtons();
         configureToolBars();
         createAndConfigurePane();
+        configureMenu();
         configureButtons();
     }
 
     BorderPane view;
     TabPane tabPane;
+    SplitPane splitPane;
+
+    //Tools
+    MenuBar menuBar;
+    //MenuBar sections
+    Menu fileMenu, helpMenu;
+    //Menu Items
+    MenuItem newFileItem, openFileItem, saveFileItem;
+    //
     ToolBar topToolBar;
     ToolBar leftToolBar;
     ToolBar rightToolBar;
@@ -45,10 +54,26 @@ public class View {
     private void createAndConfigurePane() {
         view = new BorderPane();
         tabPane = new TabPane();
-        view.setTop(topToolBar);
+        menuBar = new MenuBar();
+        splitPane = new SplitPane(menuBar, topToolBar);
+        splitPane.setOrientation(Orientation.VERTICAL);
+        view.setTop(splitPane);
         view.setLeft(leftToolBar);
         view.setRight(rightToolBar);
         view.setCenter(tabPane);
+    }
+
+    private void configureMenu(){
+        fileMenu = new Menu("File");
+        helpMenu = new Menu("Help");
+        newFileItem = new MenuItem("New");
+        openFileItem = new MenuItem("Open");
+        saveFileItem = new MenuItem("Save as...");
+        newFileItem.setOnAction(actionEvent -> addTab("Unnamed"));
+        openFileItem.setOnAction(actionEvent -> controller.setOnOpenButtonClicked(primaryStage, tabPane));
+        saveFileItem.setOnAction(actionEvent -> controller.setOnSaveButtonClicked(primaryStage, tabPane));
+        fileMenu.getItems().addAll(newFileItem, openFileItem, saveFileItem);
+        menuBar.getMenus().addAll(fileMenu, helpMenu);
     }
 
     private void configureToolBars() {
@@ -82,6 +107,7 @@ public class View {
     public void addTab(String title) {
         GraphTab tab = new GraphTab(title);
         Pane pane = new Pane();
+        ScrollPane scrollPane = new ScrollPane(pane);
         tab.setPane(pane);
         tab.setGraphView(new GraphView(tab));
         tab.getPane().setOnMouseClicked(mouseEvent -> controller.setOnPaneClicked(mouseEvent, tab));

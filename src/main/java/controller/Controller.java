@@ -30,6 +30,7 @@ public class Controller implements Observable {
         //default
         state = ModeState.VERTEX_BUTTON_MODE;
         observers = new LinkedList<>();
+        //переместить инициализацию в статический блок в контроллерах
         observers.add(VertexView.vertexController = new VertexController());
         observers.add(EdgeView.edgeController = new EdgeController());
     }
