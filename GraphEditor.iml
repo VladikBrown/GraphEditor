@@ -13,5 +13,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:19.0.0" level="project" />
+    <orderEntry type="library" name="org.jgrapht:jgrapht-core:1.4.0" level="project" />
+    <orderEntry type="library" name="org.jfxtras:jmetro:11.6.11" level="project" />
   </component>
 </module>

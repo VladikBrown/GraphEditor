@@ -1,30 +1,33 @@
 package view;
 
+import algorithm.HamiltonianCycle;
 import controller.Controller;
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import view.edge.IEdgeView;
+import view.graph.GraphTab;
+import view.graph.GraphView;
+import view.vertex.LabeledVertex;
 
+import java.util.Optional;
 
-//TODO list tabs and tab wrapper
+//TODO добавить уровни абстракции в пакеты view controller model
+
 public class View {
-    private Controller controller = new Controller();
-    private Stage primaryStage;
 
-    View(Stage stage) {
-        primaryStage = stage;
-        initializeButtons();
-        configureToolBars();
-        createAndConfigurePane();
-        configureMenu();
-        configureButtons();
-    }
+    //rightToolbar
+    Label algorithmLabel = new Label("Algorithms:");
+    private Stage primaryStage;
+    Button findPlanarCycle = new Button("Make Planar");
 
     BorderPane view;
     TabPane tabPane;
@@ -40,6 +43,7 @@ public class View {
     ToolBar topToolBar;
     ToolBar leftToolBar;
     ToolBar rightToolBar;
+    Button findEulerianCycle = new Button("Eulerian cycle");
     //topToolbar
     Button newButton = new Button();
     Button openButton = new Button();
@@ -49,8 +53,26 @@ public class View {
     Button edgeButton = new Button();
     Button deleteButton = new Button();
     Button renameButton = new Button();
-    //rightToolbar
-    Button findCyclesButton = new Button("find cycles");
+    Button findCyclesButton = new Button("Hamiltonian cycles");
+    Button findPathsButton = new Button("All Paths");
+    Button infoButton = new Button("Info");
+    Button findShortestPathButton = new Button("Shortest path");
+    Button getDistanceButton = new Button("Distance");
+    Button getIncidenceMatrixButton = new Button("Incidence Matrix");
+    Button getVertexDegreeButton = new Button("Degree");
+    private Controller controller;
+    private ToolBar bottomToolbar;
+
+    View(Stage stage) {
+        primaryStage = stage;
+        initializeButtons();
+        configureToolBars();
+        createAndConfigurePane();
+        configureMenu();
+        configureButtons();
+        this.controller = new Controller(this);
+    }
+
     private void createAndConfigurePane() {
         view = new BorderPane();
         tabPane = new TabPane();
@@ -61,9 +83,35 @@ public class View {
         view.setLeft(leftToolBar);
         view.setRight(rightToolBar);
         view.setCenter(tabPane);
+        view.setBottom(bottomToolbar);
     }
 
-    private void configureMenu(){
+    public Controller getController() {
+        return controller;
+    }
+
+    public BorderPane getView() {
+        return view;
+    }
+
+    public ToolBar getTopToolBar() {
+        return topToolBar;
+    }
+
+    public ToolBar getLeftToolBar() {
+        return leftToolBar;
+    }
+
+    public ToolBar getRightToolBar() {
+        return rightToolBar;
+    }
+
+    public ToolBar getBottomToolbar() {
+        return bottomToolbar;
+    }
+
+
+    private void configureMenu() {
         fileMenu = new Menu("File");
         helpMenu = new Menu("Help");
         newFileItem = new MenuItem("New");
@@ -79,37 +127,53 @@ public class View {
     private void configureToolBars() {
         topToolBar = new ToolBar(newButton, openButton, saveButton);
         topToolBar.setOrientation(Orientation.HORIZONTAL);
+        topToolBar.setStyle("-fx-border-color: lightgray");
         leftToolBar = new ToolBar(vertexButton, edgeButton, deleteButton, renameButton);
+        leftToolBar.setStyle("-fx-border-color: lightgray");
         leftToolBar.setOrientation(Orientation.VERTICAL);
-        rightToolBar = new ToolBar(findCyclesButton);
+
+        rightToolBar = new ToolBar(algorithmLabel, findPlanarCycle, findEulerianCycle, infoButton, findPathsButton,
+                findShortestPathButton, getDistanceButton, getIncidenceMatrixButton, getVertexDegreeButton);
+        algorithmLabel.setFont(Font.font(20));
+        algorithmLabel.setAlignment(Pos.CENTER);
+        rightToolBar.setStyle("-fx-border-color: lightgray");
         rightToolBar.setOrientation(Orientation.VERTICAL);
+        bottomToolbar = new ToolBar();
+        bottomToolbar.setOrientation(Orientation.HORIZONTAL);
+        rightToolBar.getItems().forEach(node -> node.setStyle("-fx-pref-width: 150px"));
     }
 
     private void initializeButtons() {
         //adding images
-        Image newImage = new Image("image/NewButton.png", 20, 20, false, false);
-        Image openImage = new Image("image/OpenButton.png", 20, 20, false, false);
-        Image saveImage = new Image("image/SaveButton.png", 20, 20, false, false);
-        Image vertexButtonImage = new Image("image/VertexButton.png", 20, 20, false, false);
-        Image edgeButtonImage = new Image("image/EdgeButton.png", 20, 20, false, false);
-        Image deleteButtonImage = new Image("image/DeleteButton.png", 20, 20, false, true);
-        Image changeButtonImage = new Image("image/ChangesButton.png", 20, 20, false, false);
+        Image newImage = new Image("image/newTabButton.png", 30, 30, false, false);
+        Image openImage = new Image("image/importButton.png", 30, 30, false, false);
+        Image saveImage = new Image("image/exportButton.png", 30, 30, false, false);
+        Image vertexButtonImage = new Image("image/circleButton.png", 30, 30, false, false);
+        Image edgeButtonImage = new Image("image/smallArrowButton.png", 30, 30, false, false);
+        Image deleteButtonImage = new Image("image/deleteButtonX.png", 30, 30, false, true);
+        Image changeButtonImage = new Image("image/renameButton.png", 30, 30, false, false);
         newButton.setGraphic(new ImageView(newImage));
+        newButton.setStyle("-fx-border-color: black");
         openButton.setGraphic(new ImageView(openImage));
         saveButton.setGraphic(new ImageView(saveImage));
         vertexButton.setGraphic(new ImageView(vertexButtonImage));
         edgeButton.setGraphic(new ImageView(edgeButtonImage));
         deleteButton.setGraphic(new ImageView(deleteButtonImage));
         renameButton.setGraphic(new ImageView(changeButtonImage));
-        findCyclesButton.setText("Find cycles");
     }
 
     public void addTab(String title) {
         GraphTab tab = new GraphTab(title);
         Pane pane = new Pane();
-        ScrollPane scrollPane = new ScrollPane(pane);
+        pane.setPrefWidth(1400);
+        pane.setPrefHeight(1400);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(pane);
         tab.setPane(pane);
-        tab.setGraphView(new GraphView(tab));
+        tab.setContent(scrollPane);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        tab.setGraphView(new GraphView<LabeledVertex, IEdgeView>(tab));
         tab.getPane().setOnMouseClicked(mouseEvent -> controller.setOnPaneClicked(mouseEvent, tab));
         tabPane.getTabs().add(tab);
     }
@@ -125,6 +189,7 @@ public class View {
                 (actionEvent -> controller.setOnSaveButtonClicked(primaryStage, tabPane));
         openButton.setOnAction
                 (actionEvent -> controller.setOnOpenButtonClicked(primaryStage, tabPane));
+        vertexButton.setDefaultButton(true);
         vertexButton.setOnAction
                 (actionEvent -> controller.setOnVertexButtonClicked());
         edgeButton.setOnAction
@@ -133,5 +198,53 @@ public class View {
                 (actionEvent -> controller.setOnDeleteButtonClicked());
         renameButton.setOnAction
                 (actionEvent -> controller.setOnRenameButtonClicked());
+        findPathsButton.setOnAction
+                (actionEvent -> controller.setOnFindPathsButtonClicked());
+        findShortestPathButton.setOnAction
+                (actionEvent -> controller.setOnFindShortestPathButton());
+        getDistanceButton.setOnAction
+                (actionEvent -> controller.setOnDistanceButton());
+        getVertexDegreeButton.setOnAction
+                (actionEvent -> controller.setOnGetDegreeButton());
+        getIncidenceMatrixButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().getIncidenceMatrix()));
+        findEulerianCycle.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst()
+                        .ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().findEulerianCycle()));
+        findPlanarCycle.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst()
+                        .ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().isPlanar()));
+        infoButton.setOnAction(actionEvent ->
+                tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().showInfo()));
+
+        findCyclesButton.setOnAction
+                (actionEvent -> {
+                    this.rightToolBar.getItems().removeAll(rightToolBar.getItems());
+                    this.rightToolBar.getItems().add(findCyclesButton);
+                    HamiltonianCycle hamiltonianCycle = new HamiltonianCycle(
+                            (GraphTab) tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().get());
+                    if (!hamiltonianCycle.getCycles().isEmpty()) {
+                        this.rightToolBar.getItems().add(new Label("Existing cycles: "));
+                    } else {
+                        this.rightToolBar.getItems().add(new Label("There is no existing\n cycles in graph :("));
+                    }
+                    for (int i = 0; i < hamiltonianCycle.getCycles().size(); i++) {
+                        String buttonName = "Cycle #" + i;
+                        this.rightToolBar.getItems().
+                                add(hamiltonianCycle.cycleButtonFactory(hamiltonianCycle.getCycles().get(i), buttonName));
+                    }
+                });
+        tabPane.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.R && keyEvent.isShiftDown()) {
+                TextInputDialog dialog = new TextInputDialog(" ");
+                dialog.setTitle("Rename graph");
+                dialog.setHeaderText("Please, enter new name of graph");
+                dialog.setContentText("New name: ");
+                Optional<String> result = dialog.showAndWait();
+                result.ifPresent(resultString -> tabPane.selectionModelProperty().get().getSelectedItem().setText(resultString));
+            }
+        });
     }
 }

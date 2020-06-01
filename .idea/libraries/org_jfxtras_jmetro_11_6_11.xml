@@ -1,0 +1,30 @@
+<component name="libraryTable">
+  <library name="org.jfxtras:jmetro:11.6.11" type="repository">
+    <properties maven-id="org.jfxtras:jmetro:11.6.11" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jmetro-11.6.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-11.0.2-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-11.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-11.0.2-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-11.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-11.0.2-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/controlsfx-11.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-media-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-media-11-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-web-11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-web-11-win.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/jmetro-11.6.11-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-11.0.2-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-11.0.2-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-11.0.2-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/controlsfx-11.0.0-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-11-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-media-11-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-web-11-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

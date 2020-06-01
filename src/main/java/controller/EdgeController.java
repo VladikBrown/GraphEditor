@@ -1,22 +1,20 @@
 package controller;
 
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.MouseEvent;
-import model.EdgeModel;
 import model.ModeState;
-import view.EdgeView;
-import view.GraphTab;
+import model.edge.IEdgeModel;
 import view.Observer;
+import view.edge.IEdgeView;
+import view.graph.GraphTab;
 
 import java.util.Optional;
 
 public class EdgeController implements Observer {
     private static ModeState state;
 
-
-    public void setOnEdgeClicked(MouseEvent mouseEvent, GraphTab graphTab, EdgeView copy){
+    public void setOnEdgeClicked(GraphTab graphTab, IEdgeView copy) {
         switch (state) {
-            case RENAME_BUTTON_MODE:{
+            case RENAME_BUTTON_MODE: {
                 TextInputDialog dialog = new TextInputDialog(" ");
                 dialog.setTitle("Set weight of edge");
                 dialog.setHeaderText("Please, enter new weight of edge");
@@ -32,15 +30,16 @@ public class EdgeController implements Observer {
         }
     }
 
-    public void deleteEdge(GraphTab graphTab, EdgeView edgeView){
-        EdgeModel oldEdgeModel = edgeView.getEdgeModel();
+    public void deleteEdge(GraphTab graphTab, IEdgeView edgeView) {
+        IEdgeModel oldEdgeModel = edgeView.getEdgeModel();
         edgeView.getStart().getVertexModel().removeEdge(oldEdgeModel);
         edgeView.getFinish().getVertexModel().removeEdge(oldEdgeModel);
 
-        edgeView.setVisible(false);
+        graphTab.getGraphView().removeEdge(edgeView);
         edgeView.getStart().removeEdge(edgeView);
         edgeView.getFinish().removeEdge(edgeView);
         graphTab.getEdgeList().removeEdge(edgeView);
+        edgeView.asNode().setVisible(false);
     }
 
     @Override
