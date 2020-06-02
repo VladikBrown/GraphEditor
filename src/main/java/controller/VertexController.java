@@ -70,9 +70,7 @@ public class VertexController implements Observer {
                         System.out.println("not redudant!");
                         bufferEdge.getStart().addEdge(bufferEdge);
                         bufferEdge.getFinish().addEdge(bufferEdge);
-                        graphTab.getGraphView().addEdge(bufferEdge.getStart(), bufferEdge.getFinish(), bufferEdge);
-                        graphTab.addEdge(bufferEdge);
-                        graphTab.getPane().getChildren().add(bufferEdge.asNode());
+                        graphTab.addEdge(bufferEdge.getStart(), bufferEdge.getFinish(), bufferEdge);
                     }
                     isActionInProgress = false;
                     bufferEdge.getStart().setVertexIconType(VertexIconType.NonActive);

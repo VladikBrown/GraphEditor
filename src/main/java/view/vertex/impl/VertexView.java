@@ -151,6 +151,21 @@ public class VertexView extends Label implements LabeledVertex {
         return vertexEdges;
     }
 
+    @Override
+    public boolean isConnected(IVertexView vertexView) {
+        if (this.equals(vertexView)) return false;
+        for (var edge : vertexEdges) {
+            if (edge.getFinish().equals(vertexView)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void highlight() {
+        this.setGraphic(orangeVertexImageView);
+    }
 
     @Override
     public Label asLabel() {

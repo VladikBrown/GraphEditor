@@ -32,8 +32,10 @@ public class GraphTab<V extends IVertexView, E extends IEdgeView> extends Tab {
         this.graphView = graphView;
     }
 
-    public void addEdge(E edge) {
+    public void addEdge(V vertex1, V vertex2, E edge) {
         this.edgeList.addEdge(edge);
+        graphView.addEdge(vertex1, vertex2, edge);
+        currentPane.getChildren().add(edge.asNode());
     }
 
     public EdgeList getEdgeList() {

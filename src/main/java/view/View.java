@@ -53,13 +53,19 @@ public class View {
     Button edgeButton = new Button();
     Button deleteButton = new Button();
     Button renameButton = new Button();
-    Button findCyclesButton = new Button("Hamiltonian cycles");
+    Button findHamCyclesButton = new Button("Hamiltonian cycles");
     Button findPathsButton = new Button("All Paths");
     Button infoButton = new Button("Info");
     Button findShortestPathButton = new Button("Shortest path");
     Button getDistanceButton = new Button("Distance");
     Button getIncidenceMatrixButton = new Button("Incidence Matrix");
     Button getVertexDegreeButton = new Button("Degree");
+    //added
+    Button getAdjacencyMatrixButton = new Button("Adjacency Matrix");
+    Button makeConnectedButton = new Button("Make Connected");
+    Button findRadiusButton = new Button("Radius");
+    Button findDiameterButton = new Button("Diameter");
+    Button findCenterButton = new Button("Show Center");
     private Controller controller;
     private ToolBar bottomToolbar;
 
@@ -132,8 +138,22 @@ public class View {
         leftToolBar.setStyle("-fx-border-color: lightgray");
         leftToolBar.setOrientation(Orientation.VERTICAL);
 
-        rightToolBar = new ToolBar(algorithmLabel, findPlanarCycle, findEulerianCycle, infoButton, findPathsButton,
-                findShortestPathButton, getDistanceButton, getIncidenceMatrixButton, getVertexDegreeButton);
+        rightToolBar = new ToolBar
+                (algorithmLabel,
+                        findPlanarCycle,
+                        findEulerianCycle,
+                        infoButton,
+                        findPathsButton,
+                        findShortestPathButton,
+                        getDistanceButton,
+                        getIncidenceMatrixButton,
+                        getVertexDegreeButton,
+                        getAdjacencyMatrixButton,
+                        makeConnectedButton,
+                        findHamCyclesButton,
+                        findRadiusButton,
+                        findDiameterButton,
+                        findCenterButton);
         algorithmLabel.setFont(Font.font(20));
         algorithmLabel.setAlignment(Pos.CENTER);
         rightToolBar.setStyle("-fx-border-color: lightgray");
@@ -145,13 +165,13 @@ public class View {
 
     private void initializeButtons() {
         //adding images
-        Image newImage = new Image("image/newTabButton.png", 30, 30, false, false);
-        Image openImage = new Image("image/importButton.png", 30, 30, false, false);
-        Image saveImage = new Image("image/exportButton.png", 30, 30, false, false);
-        Image vertexButtonImage = new Image("image/circleButton.png", 30, 30, false, false);
-        Image edgeButtonImage = new Image("image/smallArrowButton.png", 30, 30, false, false);
-        Image deleteButtonImage = new Image("image/deleteButtonX.png", 30, 30, false, true);
-        Image changeButtonImage = new Image("image/renameButton.png", 30, 30, false, false);
+        Image newImage = new Image("image/newTabButton.png", 30, 30, true, true);
+        Image openImage = new Image("image/importButton.png", 30, 30, true, true);
+        Image saveImage = new Image("image/exportButton.png", 30, 30, true, true);
+        Image vertexButtonImage = new Image("image/circleButton.png", 30, 30, true, true);
+        Image edgeButtonImage = new Image("image/smallArrowButton.png", 30, 30, true, true);
+        Image deleteButtonImage = new Image("image/deleteButtonX.png", 30, 30, true, true);
+        Image changeButtonImage = new Image("image/renameButton.png", 30, 30, true, true);
         newButton.setGraphic(new ImageView(newImage));
         newButton.setStyle("-fx-border-color: black");
         openButton.setGraphic(new ImageView(openImage));
@@ -218,24 +238,45 @@ public class View {
         infoButton.setOnAction(actionEvent ->
                 tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
                         ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().showInfo()));
+        makeConnectedButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().makeConnected()));
+        findRadiusButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().showRadius()));
+        findDiameterButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().showDiameter()));
+        findCenterButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().showCenter()));
+        getAdjacencyMatrixButton.setOnAction
+                (actionEvent -> tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().
+                        ifPresent(tab -> ((GraphTab) tab).getGraphView().getGraphRoot().getAdjacencyMatrix()));
 
-        findCyclesButton.setOnAction
+        findHamCyclesButton.setOnAction
                 (actionEvent -> {
-                    this.rightToolBar.getItems().removeAll(rightToolBar.getItems());
-                    this.rightToolBar.getItems().add(findCyclesButton);
+                    ToolBar hamiltonToolBar = new ToolBar();
+                    hamiltonToolBar.setOrientation(Orientation.VERTICAL);
+                    Button returnButton = new Button("Return");
+                    returnButton.setOnAction(actionEvent1 -> view.setRight(rightToolBar));
+                    hamiltonToolBar.getItems().removeAll(rightToolBar.getItems());
+                    hamiltonToolBar.getItems().add(returnButton);
                     HamiltonianCycle hamiltonianCycle = new HamiltonianCycle(
                             (GraphTab) tabPane.getTabs().stream().filter(Tab::isSelected).findFirst().get());
                     if (!hamiltonianCycle.getCycles().isEmpty()) {
-                        this.rightToolBar.getItems().add(new Label("Existing cycles: "));
+                        hamiltonToolBar.getItems().add(new Label("Existing cycles: "));
                     } else {
-                        this.rightToolBar.getItems().add(new Label("There is no existing\n cycles in graph :("));
+                        hamiltonToolBar.getItems().add(new Label("There is no existing\n cycles in graph :("));
                     }
                     for (int i = 0; i < hamiltonianCycle.getCycles().size(); i++) {
                         String buttonName = "Cycle #" + i;
-                        this.rightToolBar.getItems().
+                        hamiltonToolBar.getItems().
                                 add(hamiltonianCycle.cycleButtonFactory(hamiltonianCycle.getCycles().get(i), buttonName));
                     }
+                    view.setRight(hamiltonToolBar);
                 });
+
         tabPane.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.R && keyEvent.isShiftDown()) {
                 TextInputDialog dialog = new TextInputDialog(" ");

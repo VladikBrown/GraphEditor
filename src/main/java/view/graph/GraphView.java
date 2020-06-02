@@ -17,7 +17,7 @@ public class GraphView<V extends IVertexView, E extends IEdgeView> {
 
     public GraphView(GraphTab<V, E> graphTab) {
         this.graphTab = graphTab;
-        graphRoot = new GraphModel<>();
+        graphRoot = new GraphModel<>(this);
         vertexesGraph = new ArrayList<>();
         start = null;
     }

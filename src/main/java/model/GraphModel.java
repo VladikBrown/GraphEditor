@@ -11,29 +11,31 @@ import model.vertex.DefaultVertexModel;
 import model.vertex.IVertexModel;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.alg.cycle.HierholzerEulerianCycle;
 import org.jgrapht.alg.planar.BoyerMyrvoldPlanarityInspector;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.BFSShortestPath;
+import org.jgrapht.alg.shortestpath.GraphMeasurer;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 import view.edge.IEdgeView;
+import view.edge.impl.EdgeView;
+import view.graph.GraphView;
 import view.vertex.IVertexView;
+import view.vertex.LabeledVertex;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 public class GraphModel<V extends IVertexView, E extends IEdgeView> {
     private Graph<IVertexView, IEdgeView> graph;
+    private GraphView<V, E> graphView;
 
     private List<IVertexModel> vertexesGraph;
 
-    public GraphModel() {
-        DefaultEdge defaultEdge = new DefaultEdge();
-
-        graph = new DefaultDirectedGraph<>(IEdgeView.class);
-        vertexesGraph = new ArrayList<>();
+    public GraphModel(GraphView<V, E> graphView) {
+        this.graphView = graphView;
+        this.graph = new DefaultDirectedGraph<>(IEdgeView.class);
+        this.vertexesGraph = new ArrayList<>();
     }
 
 
@@ -71,6 +73,90 @@ public class GraphModel<V extends IVertexView, E extends IEdgeView> {
 
     public int getVertexDegree(IVertexView vertexView) {
         return graph.degreeOf(vertexView);
+    }
+
+    public void showRadius() {
+        GraphMeasurer<IVertexView, IEdgeView> gM = new GraphMeasurer<>(graph);
+
+        double radius = gM.getRadius();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Radius of graph");
+        alert.setContentText("Radius of graph is " + radius);
+        alert.setResizable(false);
+        alert.showAndWait();
+    }
+
+    public void showDiameter() {
+        GraphMeasurer<IVertexView, IEdgeView> gM = new GraphMeasurer<>(graph);
+
+        double diameter = gM.getDiameter();
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Diameter of graph");
+        alert.setContentText("Diameter of graph is " + diameter);
+        alert.setResizable(false);
+        alert.showAndWait();
+    }
+
+    public void showCenter() {
+        GraphMeasurer<IVertexView, IEdgeView> gM = new GraphMeasurer<>(graph);
+
+        List<IVertexView> center = new ArrayList<>(gM.getGraphCenter());
+
+        for (var vertex : center) {
+            vertex.highlight();
+        }
+    }
+
+    public void getAdjacencyMatrix() {
+        int[][] matrix = new int[graph.vertexSet().size()][graph.vertexSet().size()];
+        ArrayList<IVertexView> vertexList = new ArrayList<>(graph.vertexSet());
+        for (int i = 0; i < vertexList.size(); i++) {
+            for (int k = 0; k < vertexList.size(); k++) {
+                if (vertexList.get(i).isConnected(vertexList.get(k))) {
+                    matrix[i][k] = 1;
+                } else matrix[i][k] = 0;
+            }
+        }
+        StringBuilder fixedMatrix = new StringBuilder();
+        for (var x : matrix) {
+            fixedMatrix.append(Arrays.toString(x)).append("\n");
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Info about graph");
+        if (isConnected()) {
+            alert.setHeaderText("Graph is connected");
+        } else {
+            alert.setHeaderText("Graph isn't connected");
+        }
+        alert.setContentText("Adjacency matrix: \n" + fixedMatrix.toString());
+        alert.setWidth(500);
+        alert.setResizable(true);
+        alert.showAndWait();
+    }
+
+    public boolean isConnected() {
+        ConnectivityInspector<IVertexView, IEdgeView> ci = new ConnectivityInspector<>(graph);
+        return ci.isConnected();
+    }
+
+    public void makeConnected() {
+        ConnectivityInspector<IVertexView, IEdgeView> ci = new ConnectivityInspector<>(graph);
+        if (!ci.isConnected()) {
+            ArrayList<Set<IVertexView>> arrayList = new ArrayList<>(ci.connectedSets());
+            for (int i = 0; i < arrayList.size() - 1; i++) {
+                IEdgeView edgeView = new EdgeView(graphView.getGraphTab());
+                Optional<IVertexView> vertex1 = arrayList.get(i).stream().findFirst();
+                Optional<IVertexView> vertex2 = arrayList.get(i + 1).stream().findFirst();
+                if (vertex1.isPresent() && vertex2.isPresent()) {
+                    edgeView.setStart(((LabeledVertex) vertex1.get()));
+                    edgeView.setFinish(((LabeledVertex) vertex2.get()));
+                    graphView.getGraphTab().addEdge(((V) vertex1.get()), ((V) vertex2.get()), ((E) edgeView));
+                }
+            }
+        }
     }
 
     public void getIncidenceMatrix() {

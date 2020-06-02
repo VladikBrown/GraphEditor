@@ -31,4 +31,8 @@ public interface IVertexView {
     void setIdNum(int idNum);
 
     List<IEdgeView> getVertexEdges();
+
+    boolean isConnected(IVertexView vertexView);
+
+    void highlight();
 }

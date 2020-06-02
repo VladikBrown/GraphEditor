@@ -163,14 +163,12 @@ public class GraphXML {
                         finishOptional.get().addEdge(newEdge);
                     });
 
-                    graphTab.getGraphView().addEdge(((VertexView) newEdge.getStart()), ((VertexView) newEdge.getFinish()), newEdge);
-                    graphTab.addEdge(newEdge);
+                    graphTab.addEdge(((VertexView) newEdge.getStart()), ((VertexView) newEdge.getFinish()), newEdge);
 
                     IEdgeModel newEdgeModel = new EdgeModel(newEdge.getStart().getVertexModel(), newEdge.getFinish().getVertexModel());
                     newEdge.setEdgeModel(newEdgeModel);
                     newEdge.getStart().getVertexModel().addEdge(newEdgeModel);
                     newEdge.getFinish().getVertexModel().addEdge(newEdgeModel);
-                    graphTab.getPane().getChildren().add(newEdge.asNode());
                 }
             }
         } catch (Exception e) {
